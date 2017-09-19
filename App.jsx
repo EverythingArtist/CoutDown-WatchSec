@@ -1,48 +1,62 @@
+
 import React, {Component} from 'react';
 import Clock from './Clock';
 import './App.css';
 import {Form, FormControl, Button} from 'react-bootstrap';
 
+class App extends Component {
 
-class App extends Component{
   constructor(props){
     super(props);
-    this.state ={
-      time: '60',
-      newTime: ''
+    this.state = {
+      seconds: 60
     }
   }
 
-  changeTime(){
-    this.setState({time: this.state.newTime});
+  componentDidMount() {
+    setInterval(this.timer.bind(this), 1000);
   }
 
+  timer() {
+    if (this.state.seconds) {
+      this.setState(prevState => ({
+        seconds: prevState.seconds - 1
+      }));
+    }
+  }
 
-  render(){
+  handleClick(event) {
+    event.preventDefault();
+    this.setState({seconds: this.textInput.value});
+  }
+
+  renderClock() {
+    if (this.state.seconds > 0) {
+      return (<div className = 'App-title'>{this.state.seconds} Seconds</div>);
+    } else if (this.state.seconds === 0) {
+      return (<div className = 'App-title'>Done!</div>);
+    }
+  }
+
+  render() {
     return (
       <div className="App">
-        <div className = "App-title">
-          Countdown to {this.state.time}
-        </div>
+      CountDown starts:  {this.renderClock()}
 
-        <Clock
-         time={this.state.time}
-          />
-
-        <Form inline >
-          <FormControl
-            className="Deadline-input"
-            placeholder='new date'
-            onChange={event => this.setState({newTime: event.target.value})}
-            />
-          <Button onClick={() => this.changeTime()}>
-            Submit
-          </Button>
-        </Form>
-
+        <form>
+          <input
+            className='Deadline-input'
+            placeholder='Enter Seconds'
+            ref={input => this.textInput = input}
+            type='text'>
+          </input>
+          <button onClick={event => this.handleClick(event)}>Submit</button>
+            <div className='App-title1'>Default time is 60 sec. Enter your seconds to start.</div>
+        </form>
       </div>
-    )
+    );
   }
 }
 
 export default App;
+
